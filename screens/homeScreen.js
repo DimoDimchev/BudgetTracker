@@ -1,13 +1,14 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import TabNavigator from './routes/tabNavigation';
-import { NavigationContainer } from '@react-navigation/native';
 
-
-export default function App() {
+// create screen to keep track of the current month's spendings + option to add new expense
+export default function HomeScreen() {
   return (
-      <TabNavigator/>
+    <View style={styles.container}>
+      <Text>This is the home screen!</Text>
+      <StatusBar style="auto" />
+    </View>
   );
 }
 
