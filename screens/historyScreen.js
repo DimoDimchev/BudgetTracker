@@ -1,13 +1,14 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import TabNavigator from './routes/tabNavigation';
-import { NavigationContainer } from '@react-navigation/native';
 
-
-export default function App() {
+// create screen where users can see their spendings from past months
+export default function HistoryScreen() {
   return (
-      <TabNavigator/>
+    <View style={styles.container}>
+      <Text>Here you can see the history of your spendings</Text>
+      <StatusBar style="auto" />
+    </View>
   );
 }
 
