@@ -1,7 +1,7 @@
 
 # Budget Tracker
 
-A React Native budget tracker I built for myself in order to track my spendings troughout the month.
+A React Native budget tracker I built for myself in order to track my spendings throughout the month.
 
 
 
