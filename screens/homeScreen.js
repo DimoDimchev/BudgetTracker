@@ -24,10 +24,18 @@ export default function HomeScreen() {
 
   // function to get all of the categories for this month
   const getCategories = () => {
-    return undefined;
+    fetch(baseURI + currentMonth + '.json')
+      .then(res => res.json())
+      .then(data => {
+        let month = Object.keys(data).map(key => {
+          return { key: key, total: data[key]["total"], categories: data[key]["categories"] }
+        });
+        setAllCategories(month[0].categories);
+      })
   };
 
   const [totalSpendings, setTotalSpendings] = useState(getTotalSpendings);
+  const [allCategories, setAllCategories] = useState(getCategories);
 
   return (
     <View style={styles.container}>
@@ -39,7 +47,7 @@ export default function HomeScreen() {
         <Text style={styles.subtitle}>Total spendings this month: {totalSpendings}</Text>
         <Text style={styles.subtitle}>Spendings by category:</Text>
         <FlatList
-
+          data={allCategories}
         />
       </View>
       <StatusBar style="auto" />
