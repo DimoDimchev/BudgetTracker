@@ -5,6 +5,9 @@ import globalStyles from '../styles/global';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 
+// base URI for the API
+const baseURI = 'https://react-native-budget-tracker-default-rtdb.europe-west1.firebasedatabase.app/';
+
 // creating a review schema for the form using Yup in order to validate it
 const SpendingSchema = yup.object({
     title: yup
@@ -23,6 +26,19 @@ const SpendingSchema = yup.object({
 
 // create screen where users can create a new spending
 export default function addSpendingScreen() {
+    let currentMonth = new Date();
+    currentMonth = currentMonth.getMonth().toString();
+
+    // post the spending to the database
+    const postSpending = (spending) => {
+        // add the spending to all spendings for this month in the database
+        fetch(baseURI + currentMonth + '/spendings.json', {
+            method: "POST",
+            headers: { 'Content-type': 'application/json' },
+            body: JSON.stringify(spending)
+        });
+    };
+
     return (
         <View style={globalStyles.container}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -39,6 +55,7 @@ export default function addSpendingScreen() {
                         }}
                         onSubmit={(values, actions) => {
                             actions.resetForm;
+                            postSpending(values);
                         }}
                         validationSchema={SpendingSchema}
                     >
@@ -78,6 +95,7 @@ export default function addSpendingScreen() {
                                 <Button
                                     color="#4D6CFA"
                                     title="Add spending"
+                                    onPress={props.handleSubmit}
                                 />
                             </View>
                         )}

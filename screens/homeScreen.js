@@ -19,7 +19,11 @@ export default function HomeScreen() {
           let month = Object.keys(data).map(key => {
             return { key: key, total: data[key]["total"] }
           });
+          if (month[0].total) {
             setTotalSpendings(month[0].total);
+          } else {
+            setTotalSpendings(0);
+          }
         } else {
           setTotalSpendings(0);
         }
