@@ -10,20 +10,21 @@ export default function HomeScreen() {
   let currentMonth = new Date();
   currentMonth = currentMonth.getMonth().toString();
 
+  // function to find the sum of all elements in an array
+  const add = function (arr) {
+    return arr.reduce((a, b) => a + b);
+  };
+
   // function to get the total amount of spendings from this month
   const getTotalSpendings = () => {
-    fetch(baseURI + currentMonth + '.json')
+    fetch(baseURI + currentMonth + '/spendings.json')
       .then(res => res.json())
       .then(data => {
         if (data !== null) {
-          let month = Object.keys(data).map(key => {
-            return { key: key, total: data[key]["total"] }
-          });
-          if (month[0].total) {
-            setTotalSpendings(month[0].total);
-          } else {
-            setTotalSpendings(0);
-          }
+          let spendingsAmount = Object.keys(data).map(key => {
+            return Number(data[key]["amount"])
+          })
+          setTotalSpendings(add(spendingsAmount));
         } else {
           setTotalSpendings(0);
         }
@@ -31,7 +32,7 @@ export default function HomeScreen() {
       .catch((err) => {
         console.log(err);
         setTotalSpendings(0);
-      })
+      });
   };
 
   // function to get all of the categories for this month
