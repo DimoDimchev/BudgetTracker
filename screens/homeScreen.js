@@ -1,11 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import { StyleSheet, Text, FlatList, View } from 'react-native';
+import { StyleSheet, Button, Text, FlatList, View } from 'react-native';
 
 // base URI for the API
 const baseURI = 'https://react-native-budget-tracker-default-rtdb.europe-west1.firebasedatabase.app/';
 
-// create screen to keep track of the current month's spendings + option to add new expense
+// create screen to keep track of the current month's spendings
 export default function HomeScreen() {
   let currentMonth = new Date();
   currentMonth = currentMonth.getMonth().toString();
@@ -18,24 +18,21 @@ export default function HomeScreen() {
         let month = Object.keys(data).map(key => {
           return { key: key, total: data[key]["total"] }
         });
-        setTotalSpendings(month[0].total);
+        if (month[0].total >= 0) {
+          setTotalSpendings(month[0].total);
+        } else {
+          setTotalSpendings(0);
+        }
       })
   };
 
   // function to get all of the categories for this month
   const getCategories = () => {
-    fetch(baseURI + currentMonth + '.json')
-      .then(res => res.json())
-      .then(data => {
-        let month = Object.keys(data).map(key => {
-          return { key: key, total: data[key]["total"], categories: data[key]["categories"] }
-        });
-        setAllCategories(month[0].categories);
-      })
+
   };
 
   const [totalSpendings, setTotalSpendings] = useState(getTotalSpendings);
-  const [allCategories, setAllCategories] = useState(getCategories);
+  // const [allCategories, setAllCategories] = useState(getCategories);
 
   return (
     <View style={styles.container}>
@@ -46,9 +43,7 @@ export default function HomeScreen() {
       <View>
         <Text style={styles.subtitle}>Total spendings this month: {totalSpendings}</Text>
         <Text style={styles.subtitle}>Spendings by category:</Text>
-        <FlatList
-          data={allCategories}
-        />
+        {/* TODO: add code to display all of the categories for this month */}
       </View>
       <StatusBar style="auto" />
     </View>

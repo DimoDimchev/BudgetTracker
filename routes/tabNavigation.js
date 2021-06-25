@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 import HomeScreen from '../screens/homeScreen';
 import HistoryScreen from '../screens/historyScreen';
+import addSpendingScreen from '../screens/addSpendingScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -32,6 +33,14 @@ export default function TabNavigator() {
                                 color={color}
                             />
                         );
+                    } else if (route.name === 'New Spending') {
+                        return (
+                            <Ionicons
+                                name={focused ? 'add' : 'add-outline'}
+                                size={size}
+                                color={color}
+                            />
+                        );
                     }
                 },
             })}
@@ -42,6 +51,7 @@ export default function TabNavigator() {
                 }}
             >
                 <Tab.Screen name="Home" component={HomeScreen} />
+                <Tab.Screen name="New Spending" component={addSpendingScreen} />
                 <Tab.Screen name="History" component={HistoryScreen} />
             </Tab.Navigator>
         </NavigationContainer>
