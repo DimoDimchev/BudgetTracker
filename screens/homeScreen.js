@@ -1,24 +1,33 @@
 import React, { useState } from 'react';
-import { Text, SectionList, ScrollView, View, RefreshControl } from 'react-native';
+import { Text, FlatList, ScrollView, View, RefreshControl } from 'react-native';
 import globalStyles from '../styles/global';
 
 // base URI for the API
 const baseURI = 'https://react-native-budget-tracker-default-rtdb.europe-west1.firebasedatabase.app/';
 
+// date needed to send API requests for each month
+let currentMonth = new Date();
+currentMonth = currentMonth.getMonth().toString();
+
+// function to find the sum of all elements in an array
+const add = (arr) => {
+  return arr.reduce((a, b) => a + b);
+};
+
+// function to generate a key for each category
+const generateKey = (category) => {
+  let key = '';
+  for (let i = 0; i < category.length; i++) {
+    key += category.charCodeAt(i);
+  }
+  return key
+}
+
 // create screen to keep track of the current month's spendings
 export default function HomeScreen() {
-  // date needed to send API requests for each month
-  let currentMonth = new Date();
-  currentMonth = currentMonth.getMonth().toString();
-
   const [refreshing, setRefreshing] = useState(false);
   const [totalSpendings, setTotalSpendings] = useState(getTotalSpendings);
   const [totalCategories, setTotalCategories] = useState(getCategories);
-
-  // function to find the sum of all elements in an array
-  const add = function (arr) {
-    return arr.reduce((a, b) => a + b);
-  };
 
   // function to get the total amount of spendings from this month
   const getTotalSpendings = () => {
@@ -60,13 +69,15 @@ export default function HomeScreen() {
           allCategories.forEach(key => {
             let currentCategory = {
               name: key["name"],
+              key: generateKey(key["name"]),
               totalAmountSpent: add(Object.keys(key["amounts"]).map(item => {
                 return Number(key["amounts"][item]);
               }))
             }
             finalCategories.push(currentCategory);
-          }); 
+          });
           setTotalCategories(finalCategories);
+          console.log(finalCategories);
         }
       });
   };
@@ -85,6 +96,9 @@ export default function HomeScreen() {
         <Text style={globalStyles.subtitle}>Total spendings this month: {totalSpendings}</Text>
         <Text style={globalStyles.subtitle}>Spendings by category:</Text>
       </ScrollView>
+      <FlatList
+        data={totalCategories}
+      />
     </View>
   );
 }
