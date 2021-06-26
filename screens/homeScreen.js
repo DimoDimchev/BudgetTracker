@@ -70,9 +70,9 @@ export default function HomeScreen() {
             let currentCategory = {
               name: key["name"],
               key: generateKey(key["name"]),
-              totalAmountSpent: add(Object.keys(key["amounts"]).map(item => {
+              totalAmountSpent: Math.round(((add(Object.keys(key["amounts"]).map(item => {
                 return Number(key["amounts"][item]);
-              }))
+              }))) / totalSpendings ) * 100)
             }
             finalCategories.push(currentCategory);
           });
