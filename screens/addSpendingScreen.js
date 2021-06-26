@@ -68,7 +68,7 @@ export default function addSpendingScreen({ navigation }) {
                         validationSchema={SpendingSchema}
                     >
                         {(props) => (
-                            <View style={globalStyles.formContainer}>
+                            <View style={globalStyles.subContainer}>
                                 <Text style={globalStyles.subtitle}>Title:</Text>
                                 <TextInput
                                     placeholder="Write a title here"

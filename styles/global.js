@@ -27,7 +27,10 @@ const globalStyles = StyleSheet.create({
     header: {
       backgroundColor: '#daffc9',
     },
-    formContainer: {
+    body: {
+        marginVertical: 20,
+    },
+    subContainer: {
         marginHorizontal: 20,
     },
     input: {

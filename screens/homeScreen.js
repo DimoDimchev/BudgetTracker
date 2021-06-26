@@ -77,7 +77,6 @@ export default function HomeScreen() {
             finalCategories.push(currentCategory);
           });
           setTotalCategories(finalCategories);
-          console.log(finalCategories);
         }
       });
   };
@@ -88,17 +87,23 @@ export default function HomeScreen() {
         <Text style={globalStyles.title}>Welcome to your favorite budget tracker!</Text>
         <Text style={globalStyles.paragraph}>This is the home screen. Here you can see information about the current month.</Text>
       </View>
-      <ScrollView>
-        <RefreshControl
+
+      <Text style={globalStyles.subtitle}>Total spendings this month: {totalSpendings}</Text>
+
+      <View style={globalStyles.body}>
+        <Text style={globalStyles.subtitle}>Spendings by category:</Text>
+        <FlatList
           refreshing={refreshing}
           onRefresh={getTotalSpendings}
+          data={totalCategories}
+          renderItem={({ item }) => (
+            <View style={globalStyles.subContainer}>
+              <Text style={globalStyles.error}>{item.name}</Text>
+              <Text style={globalStyles.error}>{item.totalAmountSpent}</Text>
+            </View>
+          )}
         />
-        <Text style={globalStyles.subtitle}>Total spendings this month: {totalSpendings}</Text>
-        <Text style={globalStyles.subtitle}>Spendings by category:</Text>
-      </ScrollView>
-      <FlatList
-        data={totalCategories}
-      />
+      </View>
     </View>
   );
 }
