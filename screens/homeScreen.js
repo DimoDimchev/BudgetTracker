@@ -47,7 +47,6 @@ export default function HomeScreen() {
             return Number(data[key]["amount"])
           });
           setTotalSpendings(add(spendingsAmount));
-          getCategories();
         } else {
           setTotalSpendings(0);
         }
@@ -85,8 +84,14 @@ export default function HomeScreen() {
           });
           setTotalCategories(finalCategories);
         }
-      });
+      })
   };
+
+  // function to refresh both total and categories at the same time
+  const refreshAll = async () => {
+    await getTotalSpendings();
+    await getCategories();
+  }
 
   return (
     <View style={globalStyles.container}>
@@ -100,7 +105,7 @@ export default function HomeScreen() {
         <Text style={globalStyles.subtitle}>Spendings by category:</Text>
         <FlatList
           refreshing={refreshing}
-          onRefresh={getTotalSpendings}
+          onRefresh={refreshAll}
           data={totalCategories}
           renderItem={({ item, index }) => (
             <View style={[styles.categoryCard, {backgroundColor: assignColor(index)}]}>
