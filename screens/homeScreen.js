@@ -7,6 +7,7 @@ const baseURI = 'https://react-native-budget-tracker-default-rtdb.europe-west1.f
 
 // create screen to keep track of the current month's spendings
 export default function HomeScreen() {
+  // date needed to send API requests for each month
   let currentMonth = new Date();
   currentMonth = currentMonth.getMonth().toString();
 
@@ -28,8 +29,9 @@ export default function HomeScreen() {
         if (data !== null) {
           let spendingsAmount = Object.keys(data).map(key => {
             return Number(data[key]["amount"])
-          })
+          });
           setTotalSpendings(add(spendingsAmount));
+          // getCategories();
         } else {
           setTotalSpendings(0);
         }
@@ -44,7 +46,13 @@ export default function HomeScreen() {
 
   // function to get all of the categories for this month
   const getCategories = () => {
-
+    fetch(baseURI + currentMonth + '/categories.json')
+      .then(res => res.json())
+      .then(data => {
+        if (data !== null) {
+          
+        }
+      });
   };
 
   return (

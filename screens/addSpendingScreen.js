@@ -37,6 +37,13 @@ export default function addSpendingScreen({ navigation }) {
             headers: { 'Content-type': 'application/json' },
             body: JSON.stringify(spending)
         });
+
+        // add spending to the category it belongs to
+        fetch(baseURI + currentMonth + '/' +`categories/${spending.category}.json`, {
+            method: "POST",
+            headers: {'Content-type': 'application/json'},
+            body: JSON.stringify(spending.amount)
+        })
     };
 
     return (
