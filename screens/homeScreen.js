@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, FlatList, ScrollView, View, RefreshControl } from 'react-native';
+import { Text, FlatList, View, StyleSheet } from 'react-native';
 import globalStyles from '../styles/global';
 
 // base URI for the API
@@ -21,6 +21,13 @@ const generateKey = (category) => {
     key += category.charCodeAt(i);
   }
   return key
+}
+
+// function to assign a background color for each category based on its index
+const assignColor = (categoryIndex) => {
+  if (categoryIndex % 2 === 0) {
+    return '#F4AFB4'
+  } return '#CAE5FF'
 }
 
 // create screen to keep track of the current month's spendings
@@ -72,7 +79,7 @@ export default function HomeScreen() {
               key: generateKey(key["name"]),
               totalAmountSpent: Math.round(((add(Object.keys(key["amounts"]).map(item => {
                 return Number(key["amounts"][item]);
-              }))) / totalSpendings ) * 100)
+              }))) / totalSpendings) * 100) + '% of total'
             }
             finalCategories.push(currentCategory);
           });
@@ -88,18 +95,17 @@ export default function HomeScreen() {
         <Text style={globalStyles.paragraph}>This is the home screen. Here you can see information about the current month.</Text>
       </View>
 
-      <Text style={globalStyles.subtitle}>Total spendings this month: {totalSpendings}</Text>
-
       <View style={globalStyles.body}>
+        <Text style={globalStyles.subtitle}>Total spendings this month: {totalSpendings}</Text>
         <Text style={globalStyles.subtitle}>Spendings by category:</Text>
         <FlatList
           refreshing={refreshing}
           onRefresh={getTotalSpendings}
           data={totalCategories}
-          renderItem={({ item }) => (
-            <View style={globalStyles.subContainer}>
-              <Text style={globalStyles.error}>{item.name}</Text>
-              <Text style={globalStyles.error}>{item.totalAmountSpent}</Text>
+          renderItem={({ item, index }) => (
+            <View style={[styles.categoryCard, {backgroundColor: assignColor(index)}]}>
+              <Text style={styles.categoryTitle}>{item.name}</Text>
+              <Text style={styles.categoryShare}>{item.totalAmountSpent}</Text>
             </View>
           )}
         />
@@ -107,3 +113,26 @@ export default function HomeScreen() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  categoryCard: {
+    marginHorizontal: 20,
+    marginVertical: 10,
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    height: 50,
+    borderRadius: 10,
+  },
+  categoryTitle: {
+    paddingVertical: 15,
+    paddingHorizontal: 10,
+    fontSize: 15,
+    fontWeight: 'bold',
+  },
+  categoryShare: {
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    fontSize: 20,
+  },
+});

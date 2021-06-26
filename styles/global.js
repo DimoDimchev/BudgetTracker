@@ -28,7 +28,8 @@ const globalStyles = StyleSheet.create({
       backgroundColor: '#daffc9',
     },
     body: {
-        marginVertical: 20,
+        marginVertical: 10,
+        flex: 1,
     },
     subContainer: {
         marginHorizontal: 20,
