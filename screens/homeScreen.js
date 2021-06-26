@@ -31,7 +31,7 @@ export default function HomeScreen() {
             return Number(data[key]["amount"])
           });
           setTotalSpendings(add(spendingsAmount));
-          // getCategories();
+          getCategories();
         } else {
           setTotalSpendings(0);
         }
@@ -50,7 +50,13 @@ export default function HomeScreen() {
       .then(res => res.json())
       .then(data => {
         if (data !== null) {
-          
+          let allCategories = Object.keys(data).map(key => {
+            return {
+              name: key,
+              amounts: data[key]
+            }
+          });
+          console.log(allCategories);
         }
       });
   };
