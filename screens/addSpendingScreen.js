@@ -25,7 +25,7 @@ const SpendingSchema = yup.object({
 });
 
 // create screen where users can create a new spending
-export default function addSpendingScreen() {
+export default function addSpendingScreen({ navigation }) {
     let currentMonth = new Date();
     currentMonth = currentMonth.getMonth().toString();
 
@@ -56,6 +56,7 @@ export default function addSpendingScreen() {
                         onSubmit={(values, actions) => {
                             actions.resetForm;
                             postSpending(values);
+                            navigation.navigate("Home");
                         }}
                         validationSchema={SpendingSchema}
                     >
