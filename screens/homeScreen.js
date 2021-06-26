@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, FlatList, ScrollView, View, RefreshControl } from 'react-native';
+import { Text, SectionList, ScrollView, View, RefreshControl } from 'react-native';
 import globalStyles from '../styles/global';
 
 // base URI for the API
@@ -13,7 +13,7 @@ export default function HomeScreen() {
 
   const [refreshing, setRefreshing] = useState(false);
   const [totalSpendings, setTotalSpendings] = useState(getTotalSpendings);
-  // const [allCategories, setAllCategories] = useState(getCategories);
+  const [totalCategories, setTotalCategories] = useState(getCategories);
 
   // function to find the sum of all elements in an array
   const add = function (arr) {
@@ -50,13 +50,23 @@ export default function HomeScreen() {
       .then(res => res.json())
       .then(data => {
         if (data !== null) {
+          let finalCategories = [];
           let allCategories = Object.keys(data).map(key => {
             return {
               name: key,
               amounts: data[key]
             }
           });
-          console.log(allCategories);
+          allCategories.forEach(key => {
+            let currentCategory = {
+              name: key["name"],
+              totalAmountSpent: add(Object.keys(key["amounts"]).map(item => {
+                return Number(key["amounts"][item]);
+              }))
+            }
+            finalCategories.push(currentCategory);
+          }); 
+          setTotalCategories(finalCategories);
         }
       });
   };
@@ -74,7 +84,6 @@ export default function HomeScreen() {
         />
         <Text style={globalStyles.subtitle}>Total spendings this month: {totalSpendings}</Text>
         <Text style={globalStyles.subtitle}>Spendings by category:</Text>
-        {/* TODO: add code to display all of the categories for this month */}
       </ScrollView>
     </View>
   );
