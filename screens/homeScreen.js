@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Text, FlatList, View, StyleSheet } from 'react-native';
 import globalStyles from '../styles/global';
 
@@ -33,12 +33,16 @@ const assignColor = (categoryIndex) => {
 // create screen to keep track of the current month's spendings
 export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
-  const [totalSpendings, setTotalSpendings] = useState(getTotalSpendings);
-  const [totalCategories, setTotalCategories] = useState(getCategories);
+  const [totalSpendings, setTotalSpendings] = useState([]);
+  const [totalCategories, setTotalCategories] = useState([]);
+
+  useEffect(() => {
+    getTotalSpendings();
+    getCategories();
+  }, [totalSpendings, totalCategories])
 
   // function to get the total amount of spendings from this month
   const getTotalSpendings = () => {
-    setRefreshing(true);
     fetch(baseURI + currentMonth + '/spendings.json')
       .then(res => res.json())
       .then(data => {
@@ -50,7 +54,6 @@ export default function HomeScreen() {
         } else {
           setTotalSpendings(0);
         }
-        setRefreshing(false);
       })
       .catch((err) => {
         console.log(err);
@@ -87,12 +90,6 @@ export default function HomeScreen() {
       })
   };
 
-  // function to refresh both total and categories at the same time
-  const refreshAll = async () => {
-    await getTotalSpendings();
-    await getCategories();
-  }
-
   return (
     <View style={globalStyles.container}>
       <View style={globalStyles.header}>
@@ -104,8 +101,6 @@ export default function HomeScreen() {
         <Text style={globalStyles.subtitle}>Total spendings this month: {totalSpendings}</Text>
         <Text style={globalStyles.subtitle}>Spendings by category:</Text>
         <FlatList
-          refreshing={refreshing}
-          onRefresh={refreshAll}
           data={totalCategories}
           renderItem={({ item, index }) => (
             <View style={[styles.categoryCard, {backgroundColor: assignColor(index)}]}>
