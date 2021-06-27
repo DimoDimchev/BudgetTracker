@@ -16,7 +16,6 @@ currentMonth = currentMonth.getMonth().toString();
 
 // create screen to keep track of the current month's spendings
 export default function HomeScreen() {
-  const [refreshing, setRefreshing] = useState(false);
   const [totalSpendings, setTotalSpendings] = useState([]);
   const [totalCategories, setTotalCategories] = useState([]);
 
@@ -42,7 +41,6 @@ export default function HomeScreen() {
       .catch((err) => {
         console.log(err);
         setTotalSpendings(0);
-        setRefreshing(false);
       });
   };
 
@@ -87,7 +85,7 @@ export default function HomeScreen() {
         <FlatList
           data={totalCategories}
           renderItem={({ item, index }) => (
-            <View style={[styles.categoryCard, {backgroundColor: assignColor(index)}]}>
+            <View style={[styles.categoryCard, { backgroundColor: assignColor(index) }]}>
               <Text style={styles.categoryTitle}>{item.name}</Text>
               <Text style={styles.categoryShare}>{item.totalAmountSpent}</Text>
             </View>
