@@ -2,33 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { Text, FlatList, View, StyleSheet } from 'react-native';
 import globalStyles from '../styles/global';
 
+// import general functions needed for this screen
+import add from '../generalFunctions/addArray';
+import generateKey from '../generalFunctions/generateKey';
+import assignColor from '../generalFunctions/assignColor';
+
 // base URI for the API
 const baseURI = 'https://react-native-budget-tracker-default-rtdb.europe-west1.firebasedatabase.app/';
 
 // date needed to send API requests for each month
 let currentMonth = new Date();
 currentMonth = currentMonth.getMonth().toString();
-
-// function to find the sum of all elements in an array
-const add = (arr) => {
-  return arr.reduce((a, b) => a + b);
-};
-
-// function to generate a key for each category
-const generateKey = (category) => {
-  let key = '';
-  for (let i = 0; i < category.length; i++) {
-    key += category.charCodeAt(i);
-  }
-  return key
-}
-
-// function to assign a background color for each category based on its index
-const assignColor = (categoryIndex) => {
-  if (categoryIndex % 2 === 0) {
-    return '#F4AFB4'
-  } return '#CAE5FF'
-}
 
 // create screen to keep track of the current month's spendings
 export default function HomeScreen() {
