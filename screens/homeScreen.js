@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Text, FlatList, View, StyleSheet } from "react-native";
+import {
+  Text,
+  FlatList,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import globalStyles from "../styles/global";
 
 // import general functions needed for this screen
@@ -16,7 +22,7 @@ let currentMonth = new Date();
 currentMonth = currentMonth.getMonth().toString();
 
 // create screen to keep track of the current month's spendings
-export default function HomeScreen() {
+export default function HomeScreen({ navigation }) {
   const [refreshing, setRefreshing] = useState(false);
   const [totalSpendings, setTotalSpendings] = useState(undefined);
   const [totalCategories, setTotalCategories] = useState(undefined);
@@ -34,7 +40,6 @@ export default function HomeScreen() {
       let spendingsAmount = Object.keys(json).map((key) => {
         return Number(json[key]["amount"]);
       });
-      console.log(add(spendingsAmount));
       setTotalSpendings(add(spendingsAmount));
     } else {
       setTotalSpendings(0);
@@ -46,7 +51,7 @@ export default function HomeScreen() {
     const response = await fetch(baseURI + currentMonth + "/categories.json");
     const json = await response.json();
     if (json !== null) {
-      console.log(json);
+      let finalCategories = [];
       let allCategories = Object.keys(json).map((key) => {
         return {
           name: key,
@@ -54,25 +59,24 @@ export default function HomeScreen() {
         };
       });
       console.log(allCategories);
-      // allCategories.forEach((key) => {
-      //   let currentCategory = {
-      //     name: key["name"],
-      //     key: generateKey(key["name"]),
-      //     totalAmountSpent:
-      //       Math.round(
-      //         (add(
-      //           Object.keys(key["amounts"]).map((item) => {
-      //             return Number(key["amounts"][item]);
-      //           })
-      //         ) /
-      //           totalSpendings) *
-      //           100
-      //       ) + "% of total",
-      //   };
-      //   finalCategories.push(currentCategory);
-      // });
-      // console.log(finalCategories);
-      // setTotalCategories(finalCategories);
+      allCategories.forEach((key) => {
+        let currentCategory = {
+          name: key["name"],
+          key: generateKey(key["name"]),
+          totalAmountSpent:
+            Math.round(
+              (add(
+                Object.keys(key["amounts"]).map((item) => {
+                  return Number(key["amounts"][item]["amount"]);
+                })
+              ) /
+                totalSpendings) *
+                100
+            ) + "% of total",
+        };
+        finalCategories.push(currentCategory);
+      });
+      setTotalCategories(finalCategories);
     }
   };
 
@@ -105,15 +109,19 @@ export default function HomeScreen() {
           refreshing={refreshing}
           data={totalCategories}
           renderItem={({ item, index }) => (
-            <View
-              style={[
-                styles.categoryCard,
-                { backgroundColor: assignColor(index) },
-              ]}
-            >
-              <Text style={styles.categoryTitle}>{item.name}</Text>
-              <Text style={styles.categoryShare}>{item.totalAmountSpent}</Text>
-            </View>
+            <TouchableOpacity onPress={() => navigation.navigate("Details")}>
+              <View
+                style={[
+                  styles.categoryCard,
+                  { backgroundColor: assignColor(index) },
+                ]}
+              >
+                <Text style={styles.categoryTitle}>{item.name}</Text>
+                <Text style={styles.categoryShare}>
+                  {item.totalAmountSpent}
+                </Text>
+              </View>
+            </TouchableOpacity>
           )}
         />
       </View>

@@ -4,7 +4,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 
-import HomeScreen from "../screens/homeScreen";
+import HomeStackScreen from "./stackNavigation";
 import HistoryScreen from "../screens/historyScreen";
 import addSpendingScreen from "../screens/addSpendingScreen";
 
@@ -51,7 +51,7 @@ export default function TabNavigator() {
           inactiveTintColor: "gray",
         }}
       >
-        <Tab.Screen name="Home" component={HomeScreen} />
+        <Tab.Screen name="Home" component={HomeStackScreen} />
         <Tab.Screen name="New Spending" component={addSpendingScreen} />
         <Tab.Screen name="History" component={HistoryScreen} />
       </Tab.Navigator>
