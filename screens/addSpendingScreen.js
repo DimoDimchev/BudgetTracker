@@ -80,7 +80,6 @@ export default function addSpendingScreen({ navigation }) {
                 <TextInput
                   placeholder="Write a title here"
                   style={globalStyles.input}
-                  autoCorrect={false}
                   onChangeText={props.handleChange("title")}
                   value={props.values.title}
                   onBlur={props.handleBlur("title")}

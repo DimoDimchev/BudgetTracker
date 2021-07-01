@@ -21,11 +21,10 @@ export default function HomeScreen() {
   const [totalSpendings, setTotalSpendings] = useState(undefined);
   const [totalCategories, setTotalCategories] = useState(undefined);
 
-  // useEffect(() => {
-  //   console.log(totalCategories);
-  //   getTotalSpendings();
-  //   getCategories();
-  // }, [totalCategories]);
+  useEffect(() => {
+    getTotalSpendings();
+    getCategories();
+  }, []);
 
   // function to get the total amount of spendings from this month
   const getTotalSpendings = async () => {
@@ -75,7 +74,6 @@ export default function HomeScreen() {
   };
 
   async function onRefresh() {
-    console.log("Triggering refresh");
     setRefreshing(true);
     await getTotalSpendings();
     await getCategories();
