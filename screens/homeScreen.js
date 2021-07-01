@@ -17,68 +17,70 @@ currentMonth = currentMonth.getMonth().toString();
 
 // create screen to keep track of the current month's spendings
 export default function HomeScreen() {
-  const [totalSpendings, setTotalSpendings] = useState([]);
-  const [totalCategories, setTotalCategories] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [totalSpendings, setTotalSpendings] = useState(undefined);
+  const [totalCategories, setTotalCategories] = useState(undefined);
 
-  useEffect(() => {
-    getTotalSpendings();
-    getCategories();
-  }, [totalSpendings, totalCategories]);
+  // useEffect(() => {
+  //   console.log(totalCategories);
+  //   getTotalSpendings();
+  //   getCategories();
+  // }, [totalCategories]);
 
   // function to get the total amount of spendings from this month
-  const getTotalSpendings = () => {
-    fetch(baseURI + currentMonth + "/spendings.json")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data !== null) {
-          let spendingsAmount = Object.keys(data).map((key) => {
-            return Number(data[key]["amount"]);
-          });
-          setTotalSpendings(add(spendingsAmount));
-        } else {
-          setTotalSpendings(0);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        setTotalSpendings(0);
+  const getTotalSpendings = async () => {
+    const response = await fetch(baseURI + currentMonth + "/spendings.json");
+    const json = await response.json();
+    if (json !== null) {
+      let spendingsAmount = Object.keys(json).map((key) => {
+        return Number(json[key]["amount"]);
       });
+      setTotalSpendings(add(spendingsAmount));
+    } else {
+      setTotalSpendings(0);
+    }
   };
 
   // function to get all of the categories for this month
-  const getCategories = () => {
-    fetch(baseURI + currentMonth + "/categories.json")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data !== null) {
-          let finalCategories = [];
-          let allCategories = Object.keys(data).map((key) => {
-            return {
-              name: key,
-              amounts: data[key],
-            };
-          });
-          allCategories.forEach((key) => {
-            let currentCategory = {
-              name: key["name"],
-              key: generateKey(key["name"]),
-              totalAmountSpent:
-                Math.round(
-                  (add(
-                    Object.keys(key["amounts"]).map((item) => {
-                      return Number(key["amounts"][item]);
-                    })
-                  ) /
-                    totalSpendings) *
-                    100
-                ) + "% of total",
-            };
-            finalCategories.push(currentCategory);
-          });
-          setTotalCategories(finalCategories);
-        }
+  const getCategories = async () => {
+    const response = await fetch(baseURI + currentMonth + "/categories.json");
+    const json = await response.json();
+    if (json !== null) {
+      let finalCategories = [];
+      let allCategories = Object.keys(json).map((key) => {
+        return {
+          name: key,
+          amounts: json[key],
+        };
       });
+      allCategories.forEach((key) => {
+        let currentCategory = {
+          name: key["name"],
+          key: generateKey(key["name"]),
+          totalAmountSpent:
+            Math.round(
+              (add(
+                Object.keys(key["amounts"]).map((item) => {
+                  return Number(key["amounts"][item]);
+                })
+              ) /
+                totalSpendings) *
+                100
+            ) + "% of total",
+        };
+        finalCategories.push(currentCategory);
+      });
+      setTotalCategories(finalCategories);
+    }
   };
+
+  async function onRefresh() {
+    console.log("Triggering refresh");
+    setRefreshing(true);
+    await getTotalSpendings();
+    await getCategories();
+    setRefreshing(false);
+  }
 
   return (
     <View style={globalStyles.container}>
@@ -98,6 +100,8 @@ export default function HomeScreen() {
         </Text>
         <Text style={globalStyles.subtitle}>Spendings by category:</Text>
         <FlatList
+          onRefresh={onRefresh}
+          refreshing={refreshing}
           data={totalCategories}
           renderItem={({ item, index }) => (
             <View
