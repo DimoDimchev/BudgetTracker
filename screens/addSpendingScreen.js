@@ -31,7 +31,7 @@ export default function addSpendingScreen({ navigation }) {
   // post the spending to the database
   const postSpending = (spending) => {
     // add the spending to all spendings for this month in the database
-    fetch(baseURI + currentMonth + "/spendings.json", {
+    fetch(baseURI + currentMonth + "/spendings/.json", {
       method: "POST",
       headers: { "Content-type": "application/json" },
       body: JSON.stringify(spending),
@@ -43,7 +43,7 @@ export default function addSpendingScreen({ navigation }) {
       {
         method: "POST",
         headers: { "Content-type": "application/json" },
-        body: JSON.stringify(spending.amount),
+        body: JSON.stringify(spending),
       }
     );
   };

@@ -34,6 +34,7 @@ export default function HomeScreen() {
       let spendingsAmount = Object.keys(json).map((key) => {
         return Number(json[key]["amount"]);
       });
+      console.log(add(spendingsAmount));
       setTotalSpendings(add(spendingsAmount));
     } else {
       setTotalSpendings(0);
@@ -45,31 +46,33 @@ export default function HomeScreen() {
     const response = await fetch(baseURI + currentMonth + "/categories.json");
     const json = await response.json();
     if (json !== null) {
-      let finalCategories = [];
+      console.log(json);
       let allCategories = Object.keys(json).map((key) => {
         return {
           name: key,
           amounts: json[key],
         };
       });
-      allCategories.forEach((key) => {
-        let currentCategory = {
-          name: key["name"],
-          key: generateKey(key["name"]),
-          totalAmountSpent:
-            Math.round(
-              (add(
-                Object.keys(key["amounts"]).map((item) => {
-                  return Number(key["amounts"][item]);
-                })
-              ) /
-                totalSpendings) *
-                100
-            ) + "% of total",
-        };
-        finalCategories.push(currentCategory);
-      });
-      setTotalCategories(finalCategories);
+      console.log(allCategories);
+      // allCategories.forEach((key) => {
+      //   let currentCategory = {
+      //     name: key["name"],
+      //     key: generateKey(key["name"]),
+      //     totalAmountSpent:
+      //       Math.round(
+      //         (add(
+      //           Object.keys(key["amounts"]).map((item) => {
+      //             return Number(key["amounts"][item]);
+      //           })
+      //         ) /
+      //           totalSpendings) *
+      //           100
+      //       ) + "% of total",
+      //   };
+      //   finalCategories.push(currentCategory);
+      // });
+      // console.log(finalCategories);
+      // setTotalCategories(finalCategories);
     }
   };
 
