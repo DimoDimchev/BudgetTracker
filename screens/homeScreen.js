@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { Text, FlatList, View, StyleSheet } from 'react-native';
-import globalStyles from '../styles/global';
+import React, { useState, useEffect } from "react";
+import { Text, FlatList, View, StyleSheet } from "react-native";
+import globalStyles from "../styles/global";
 
 // import general functions needed for this screen
-import add from '../generalFunctions/addArray';
-import generateKey from '../generalFunctions/generateKey';
-import assignColor from '../generalFunctions/assignColor';
+import add from "../generalFunctions/addArray";
+import generateKey from "../generalFunctions/generateKey";
+import assignColor from "../generalFunctions/assignColor";
 
 // base URI for the API
-const baseURI = 'https://react-native-budget-tracker-default-rtdb.europe-west1.firebasedatabase.app/';
+const baseURI =
+  "https://react-native-budget-tracker-default-rtdb.europe-west1.firebasedatabase.app/";
 
 // date needed to send API requests for each month
 let currentMonth = new Date();
@@ -22,16 +23,16 @@ export default function HomeScreen() {
   useEffect(() => {
     getTotalSpendings();
     getCategories();
-  }, [totalSpendings, totalCategories])
+  }, [totalSpendings, totalCategories]);
 
   // function to get the total amount of spendings from this month
   const getTotalSpendings = () => {
-    fetch(baseURI + currentMonth + '/spendings.json')
-      .then(res => res.json())
-      .then(data => {
+    fetch(baseURI + currentMonth + "/spendings.json")
+      .then((res) => res.json())
+      .then((data) => {
         if (data !== null) {
-          let spendingsAmount = Object.keys(data).map(key => {
-            return Number(data[key]["amount"])
+          let spendingsAmount = Object.keys(data).map((key) => {
+            return Number(data[key]["amount"]);
           });
           setTotalSpendings(add(spendingsAmount));
         } else {
@@ -46,46 +47,65 @@ export default function HomeScreen() {
 
   // function to get all of the categories for this month
   const getCategories = () => {
-    fetch(baseURI + currentMonth + '/categories.json')
-      .then(res => res.json())
-      .then(data => {
+    fetch(baseURI + currentMonth + "/categories.json")
+      .then((res) => res.json())
+      .then((data) => {
         if (data !== null) {
           let finalCategories = [];
-          let allCategories = Object.keys(data).map(key => {
+          let allCategories = Object.keys(data).map((key) => {
             return {
               name: key,
-              amounts: data[key]
-            }
+              amounts: data[key],
+            };
           });
-          allCategories.forEach(key => {
+          allCategories.forEach((key) => {
             let currentCategory = {
               name: key["name"],
               key: generateKey(key["name"]),
-              totalAmountSpent: Math.round(((add(Object.keys(key["amounts"]).map(item => {
-                return Number(key["amounts"][item]);
-              }))) / totalSpendings) * 100) + '% of total'
-            }
+              totalAmountSpent:
+                Math.round(
+                  (add(
+                    Object.keys(key["amounts"]).map((item) => {
+                      return Number(key["amounts"][item]);
+                    })
+                  ) /
+                    totalSpendings) *
+                    100
+                ) + "% of total",
+            };
             finalCategories.push(currentCategory);
           });
           setTotalCategories(finalCategories);
         }
-      })
+      });
   };
 
   return (
     <View style={globalStyles.container}>
       <View style={globalStyles.header}>
-        <Text style={globalStyles.title}>Welcome to your favorite budget tracker!</Text>
-        <Text style={globalStyles.paragraph}>This is the home screen. Here you can see information about the current month.</Text>
+        <Text style={globalStyles.title}>
+          Welcome to your favorite budget tracker!
+        </Text>
+        <Text style={globalStyles.paragraph}>
+          This is the home screen. Here you can see information about the
+          current month.
+        </Text>
       </View>
 
       <View style={globalStyles.body}>
-        <Text style={globalStyles.subtitle}>Total spendings this month: {totalSpendings}</Text>
+        <Text style={globalStyles.subtitle}>
+          Total spendings this month: {totalSpendings}
+        </Text>
         <Text style={globalStyles.subtitle}>Spendings by category:</Text>
         <FlatList
           data={totalCategories}
           renderItem={({ item, index }) => (
-            <View style={[styles.categoryCard, { backgroundColor: assignColor(index) }]}>
+            <View
+              style={[
+                styles.categoryCard,
+                { backgroundColor: assignColor(index) },
+              ]}
+            >
               <Text style={styles.categoryTitle}>{item.name}</Text>
               <Text style={styles.categoryShare}>{item.totalAmountSpent}</Text>
             </View>
@@ -101,8 +121,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginVertical: 10,
     flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     height: 50,
     borderRadius: 10,
   },
@@ -110,7 +130,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 10,
     fontSize: 15,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   categoryShare: {
     paddingVertical: 12,
