@@ -16,6 +16,7 @@ currentMonth = currentMonth.getMonth().toString();
 // create screen where users can see their spendings from past months
 export default function HistoryScreen() {
   const [prevMonths, setPrevMonths] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     getTotalSpendings();
@@ -70,6 +71,10 @@ export default function HistoryScreen() {
     });
   };
 
+  const onRefresh = async () => {
+    await getTotalSpendings();
+  };
+
   return (
     <View style={globalStyles.container}>
       <View style={globalStyles.header}>
@@ -80,6 +85,8 @@ export default function HistoryScreen() {
       </View>
       <View style={globalStyles.body}>
         <FlatList
+          refreshing={refreshing}
+          onRefresh={onRefresh}
           data={prevMonths}
           renderItem={({ item, index }) => (
             <MonthCard item={item} index={index} />
