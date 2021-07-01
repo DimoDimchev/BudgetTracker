@@ -1,10 +1,26 @@
-import { StatusBar } from "expo-status-bar";
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import React, { useState } from "react";
+import { StyleSheet, Text, View, Button } from "react-native";
 import globalStyles from "../styles/global";
+
+// base URI for the API
+const baseURI =
+  "https://react-native-budget-tracker-default-rtdb.europe-west1.firebasedatabase.app/";
 
 // create screen where users can see their spendings from past months
 export default function HistoryScreen() {
+  const [months, setMonths] = useState(undefined);
+
+  const getAllMonths = async () => {
+    const response = await fetch(baseURI + ".json");
+    const json = await response.json();
+    const allMonths = Object.keys(json).map((key) => {
+      return {
+        key: key,
+      };
+    });
+    console.log(allMonths);
+  };
+
   return (
     <View style={globalStyles.container}>
       <View style={globalStyles.header}>
@@ -12,6 +28,7 @@ export default function HistoryScreen() {
         <Text style={globalStyles.paragraph}>
           See information about previous months on this screen
         </Text>
+        <Button title={"blah"} onPress={getAllMonths} />
       </View>
     </View>
   );
