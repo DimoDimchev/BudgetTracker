@@ -113,7 +113,13 @@ export default function HomeScreen({ navigation }) {
               onPress={() =>
                 navigation.navigate("Details", {
                   name: item.name,
-                  allAmounts: item.allAmounts,
+                  allAmounts: Object.keys(item.allAmounts).map((key) => {
+                    return {
+                      key: generateKey(item.allAmounts[key]["title"]),
+                      title: item.allAmounts[key]["title"],
+                      amount: item.allAmounts[key]["amount"],
+                    };
+                  }),
                   totalAmountSpent: item.totalAmountSpent,
                 })
               }
