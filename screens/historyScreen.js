@@ -1,24 +1,73 @@
-import React, { useState } from "react";
-import { StyleSheet, Text, View, Button } from "react-native";
+import React, { useState, useEffect } from "react";
+import { Text, View, FlatList } from "react-native";
 import globalStyles from "../styles/global";
+import add from "../generalFunctions/addArray";
+import MonthCard from "../components/month";
+import generateKey from "../generalFunctions/generateKey";
 
 // base URI for the API
 const baseURI =
   "https://react-native-budget-tracker-default-rtdb.europe-west1.firebasedatabase.app/";
 
+// date needed to send API requests for each month
+let currentMonth = new Date();
+currentMonth = currentMonth.getMonth().toString();
+
 // create screen where users can see their spendings from past months
 export default function HistoryScreen() {
-  const [months, setMonths] = useState(undefined);
+  const [prevMonths, setPrevMonths] = useState([]);
+
+  useEffect(() => {
+    getTotalSpendings();
+    console.log("Effect");
+  }, [prevMonths.length]);
 
   const getAllMonths = async () => {
     const response = await fetch(baseURI + ".json");
     const json = await response.json();
     const allMonths = Object.keys(json).map((key) => {
-      return {
-        key: key,
-      };
+      if (key == currentMonth) {
+        return key;
+      }
     });
-    console.log(allMonths);
+    return allMonths;
+  };
+
+  // function to get the total amount of spendings from each month
+  const getTotalSpendings = async () => {
+    const allMonths = await getAllMonths();
+
+    let total = 0;
+
+    allMonths.forEach(async (month) => {
+      const response = await fetch(baseURI + month + "/spendings.json");
+      const json = await response.json();
+      if (json !== null) {
+        let spendingsAmount = Object.keys(json).map((key) => {
+          return Number(json[key]["amount"]);
+        });
+        total = add(spendingsAmount);
+      } else {
+        total = 0;
+      }
+
+      setPrevMonths((previous) => {
+        let present = false;
+        for (let key of prevMonths) {
+          if (month === key["month"]) {
+            present = true;
+          }
+        }
+        if (present !== true) {
+          return [
+            { month: month, total: total, key: generateKey(month) },
+            ...previous,
+          ];
+        } else {
+          return [...previous];
+        }
+      });
+    });
   };
 
   return (
@@ -28,17 +77,15 @@ export default function HistoryScreen() {
         <Text style={globalStyles.paragraph}>
           See information about previous months on this screen
         </Text>
-        <Button title={"blah"} onPress={getAllMonths} />
+      </View>
+      <View style={globalStyles.body}>
+        <FlatList
+          data={prevMonths}
+          renderItem={({ item, index }) => (
+            <MonthCard item={item} index={index} />
+          )}
+        />
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
