@@ -77,6 +77,8 @@ export default function HomeScreen({ navigation }) {
         finalCategories.push(currentCategory);
       });
       setTotalCategories(finalCategories);
+    } else {
+      setTotalCategories(undefined);
     }
   };
 

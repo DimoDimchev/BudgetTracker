@@ -26,53 +26,66 @@ export default function HistoryScreen() {
   const getAllMonths = async () => {
     const response = await fetch(baseURI + ".json");
     const json = await response.json();
-    const allMonths = Object.keys(json).map((key) => {
-      if (key == currentMonth) {
-        return key;
+    if (json !== null) {
+      const allMonths = Object.keys(json).map((key) => {
+        if (key !== currentMonth) {
+          return key;
+        }
+      });
+      if (allMonths.length > 0) {
+        return allMonths;
+      } else {
+        return undefined;
       }
-    });
-    return allMonths;
+    } else {
+      return undefined;
+    }
   };
 
   // function to get the total amount of spendings from each month
   const getTotalSpendings = async () => {
     const allMonths = await getAllMonths();
+    if (allMonths !== undefined) {
+      let total = 0;
 
-    let total = 0;
-
-    allMonths.forEach(async (month) => {
-      const response = await fetch(baseURI + month + "/spendings.json");
-      const json = await response.json();
-      if (json !== null) {
-        let spendingsAmount = Object.keys(json).map((key) => {
-          return Number(json[key]["amount"]);
-        });
-        total = add(spendingsAmount);
-      } else {
-        total = 0;
-      }
-
-      setPrevMonths((previous) => {
-        let present = false;
-        for (let key of prevMonths) {
-          if (month === key["month"]) {
-            present = true;
-          }
-        }
-        if (present !== true) {
-          return [
-            { month: month, total: total, key: generateKey(month) },
-            ...previous,
-          ];
+      allMonths.forEach(async (month) => {
+        const response = await fetch(baseURI + month + "/spendings.json");
+        const json = await response.json();
+        if (json !== null) {
+          let spendingsAmount = Object.keys(json).map((key) => {
+            return Number(json[key]["amount"]);
+          });
+          total = add(spendingsAmount);
         } else {
-          return [...previous];
+          total = 0;
         }
+
+        setPrevMonths((previous) => {
+          let present = false;
+          for (let key of prevMonths) {
+            if (month === key["month"]) {
+              present = true;
+            }
+          }
+          if (present !== true) {
+            return [
+              { month: month, total: total, key: generateKey(month) },
+              ...previous,
+            ];
+          } else {
+            return [...previous];
+          }
+        });
       });
-    });
+    } else {
+      setPrevMonths(undefined);
+    }
   };
 
   const onRefresh = async () => {
+    setRefreshing(true);
     await getTotalSpendings();
+    setRefreshing(false);
   };
 
   return (
@@ -84,14 +97,18 @@ export default function HistoryScreen() {
         </Text>
       </View>
       <View style={globalStyles.body}>
-        <FlatList
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-          data={prevMonths}
-          renderItem={({ item, index }) => (
-            <MonthCard item={item} index={index} />
-          )}
-        />
+        {prevMonths !== undefined ? (
+          <FlatList
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            data={prevMonths}
+            renderItem={({ item, index }) => (
+              <MonthCard item={item} index={index} />
+            )}
+          />
+        ) : (
+          <Text>"Nothing to show here"</Text>
+        )}
       </View>
     </View>
   );
