@@ -58,11 +58,11 @@ export default function HomeScreen({ navigation }) {
           amounts: json[key],
         };
       });
-      console.log(allCategories);
       allCategories.forEach((key) => {
         let currentCategory = {
           name: key["name"],
           key: generateKey(key["name"]),
+          allAmounts: key["amounts"],
           totalAmountSpent:
             Math.round(
               (add(
@@ -109,7 +109,15 @@ export default function HomeScreen({ navigation }) {
           refreshing={refreshing}
           data={totalCategories}
           renderItem={({ item, index }) => (
-            <TouchableOpacity onPress={() => navigation.navigate("Details")}>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("Details", {
+                  name: item.name,
+                  allAmounts: item.allAmounts,
+                  totalAmountSpent: item.totalAmountSpent,
+                })
+              }
+            >
               <View
                 style={[
                   styles.categoryCard,

@@ -2,10 +2,11 @@ import React from "react";
 import { Text, View } from "react-native";
 import globalStyles from "../styles/global";
 
-export default function DetailsScreen() {
+export default function DetailsScreen({ route }) {
+  const { name, allAmounts, totalAmountSpent } = route.params;
   return (
     <View>
-      <Text>Kys</Text>
+      <Text>{name}</Text>
     </View>
   );
 }
